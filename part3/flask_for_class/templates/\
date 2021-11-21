@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+</head>
+
+<body>
+{% if not message %}
+	<a href="/login">Login</a>
+	<a href="/register">Register</a>
+
+<form action="/post" method="POST">
+	<h1>Welcome to NYU Airlines</h1>
+	<input type="text" name = "source" placeholder="Leaving from" required/> </br>
+	<input type="text" name = "destination" placeholder="Going to" required/> </br>
+    <spacing>
+        <button
+            type='button'
+            id='date'
+            style= "width:10px;height:15px;display:inline-block;"
+            onclick=roundtrip()
+            >
+        <p> Round Trip</p>
+        </br>
+    </spacing>
+    <input id='date' type='datetime-local'>
+	<input type="submit" value = Search />
+</form>
+
+<script>
+    function roundtrip() {
+            n =  new Date();
+            y = n.getFullYear();
+            m = n.getMonth() + 1;
+            d = n.getDate();
+            h = n.getHours();
+            min= n.getMinutes();
+            document.getElementById("date").innerHTML=
+               '<label for="dept-date">Depature Date</label>'
+               +'<input type="datetime-local" id="dept-date"'
+               +'name="dept-date" value="y+'-'+m+'-'+d+'T'+h+':'+min"'
+               +'min="y+'-'+m+'-'+d+'T'+h+':'+(min-1)"'
+               +'min="(y+2)+'-'+m+'-'+d+'T'+h+':'+min"/>';
+        }
+</script>
+
+
+<style type="text/css">
+	table, th, td{
+		border: 1px solid black;
+	}
+    spacing {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 70px;
+    }
+
+</style>
+
+<table>
+	<th>Status</th>
+	<th>Airline</th>
+	<th>Flight Number</th>
+	<th>Arrival</th>
+	<th>Departure</th>
+
+{% for line in posts %}
+	<tr>
+		<td>{{line['ts']}}</td>
+		<td>{{line['blog_post']}}</td>
+	</tr>
+{% endfor %}
+</table>
+
+{% endif %}
+
+{% if message %}
+	<a href="/logout">Logout</a>
+	<a href="/remove_account">Remove Account</a>
+	<p class="message">You are logged in {{message}}. You have {{num}} follower(s)</p> </br>
+	<a href="/tweets">View your tweets</a> </br>
+	<a href="/find_people">Find people to follow</a> </br>
+	<a href="/unfollow">Unfollow someone</a> </br>
+	<a href="/view_followed">View people you have followed</a> </br>
+	</br>
+
+        <h4>15 most recent tweets from you and your followers </h4> </br>
+
+	{% for line in tweets%}
+	        <p>{{line}}</p>
+	        <hr>
+	{% endfor %}
+	{% endif %}
+</body>
+
+</html>
