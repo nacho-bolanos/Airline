@@ -20,51 +20,45 @@
     <label for="roundtrip" style="padding: 10px 5px 0 0;">Round trip</label>
     <input type='button' id='roundtrip' onclick='round()' style ="height:15px;width:15px;"></br>
     <div id='return' value=return-date> </div>
+	<input type="submit" id='flightsrcdst' value ='Search'/>
 </form>
-	<input type="button" id='flightsrcdst' value ='Search' onclick='flight_src_dst()'/>
-    <div id='flights_dst/src'> </div>
-<p>
-        Button Clicked <span 
-        id="display">0</span> Times
-</p>
+<table>
+   <th>Airline</th>
+   <th>Flight Number</th>
+   <th>Arrival</th>
+   <th>Arrival Date</th>
+   <th>Departure</th>
+   <th>Departure Date</th>
+{% for line in flights_by_date %}
+   <tr>
+	  <td>{{line['airline_name']}}</td>
+	  <td>{{line['flight_num']}}</td>
+	  <td>{{line['arr_name']}}</td>
+	  <td>{{line['arr_date_time']}}</td>
+	  <td>{{line['dept_name']}}</td>
+	  <td>{{line['dept_date_time']}}</td>
+   </tr>
+{% endfor %}
+</table>
+
+<!-- <p> -->
+<!--         Button Clicked <span --> 
+<!--         id="display">0</span> Times -->
+<!-- </p> -->
 
 <script>
     function round() {
             document.getElementById("return").innerHTML=
                 '<input id ="date" name="return_date" type="date" required/></br>';
         }
-        var count = 0;
-        var btn_src_dst = document.getElementById("flightsrcdst");
-        var disp = document.getElementById("display");
+        <!-- var count = 0; -->
+        <!-- var btn_src_dst = document.getElementById("flightsrcdst"); -->
+        <!-- var disp = document.getElementById("display"); -->
 
-        btn_src.onclick = function () {
-            count++;
-            disp.innerHTML = count;
-        }
-    function flight_src_dst() {
-            
-            document.getElementById('flights_dst/src').innerHTML=
-                '<table>'
-                   + '<th>Airline</th>'
-                   + '<th>Flight Number</th>'
-                   + '<th>Arrival</th>'
-                   + '<th>Arrival Date</th>'
-                   + '<th>Departure</th>'
-                   + '<th>Departure Date</th>'
-               + '{% for line in posts %}'
-                   + '<tr>'
-                      + '<td>{{line['airline_name']}}</td>'
-                      + '<td>{{line['flight_num']}}</td>'
-                      + '<td>{{line['arr_name']}}</td>'
-                      + '<td>{{line['arr_date_time']}}</td>'
-                      + '<td>{{line['dept_name']}}</td>'
-                      + '<td>{{line['dept_date_time']}}</td>'
-                   + '</tr>'
-                + '{% endfor %}'
-                + '</table>';
-            return false;
-            document.getElementById('flight_date').submit();
-        }
+        <!-- btn_src.onclick = function () { -->
+        <!--     count++; -->
+        <!--     disp.innerHTML = count; -->
+        <!-- } -->
         function flight_flight_num() {
             document.getElementById('flight_flightnum').innerHTML = 
                 '<table>'
@@ -108,9 +102,21 @@
 	<input type="text" name = "airline" placeholder="Airline" required/> </br>
 	<input type="text" name = "flight_num" placeholder="Flight number" required/> </br>
 	<input type="text" name = "arr_dept" placeholder="Arrival/Departure" required/> </br>
+	<input type="submit" value ="Search"/>
 </form>
-	<input type="submit" value ="Search" onclick='flight_flight_num();'/>
-    <div id='flight_flightnum'> </div>
+<table>
+	   <th>Airline</th>
+	   <th>Flight Number</th>
+	   <th>Status</th>
+	   {%for line in flights_by_num %}
+		  <tr>
+			   <td>{{line['airline_name']}}</td>
+			   <td>{{line['flight_num']}}</td>
+			   <td>{{line['status']}}</td>
+		  </tr>
+		{% endfor %}
+	</table>
+
 
 {% endif %}
 

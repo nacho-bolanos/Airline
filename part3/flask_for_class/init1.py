@@ -60,13 +60,19 @@ def loginAuth():
 @app.route('/registerAuth', methods=['GET', 'POST'])
 def registerAuth():
 	#grabs information from the forms
-	username = request.form['username']
-	password = request.form['password']
+	username  = request.form['username']
+	password  = request.form['password']
+	type_user = request.form['type_user']
+	phone_nums = request.form['phone_nums']
 
+	print(type_user)
+	print(phone_nums)
 	#cursor used to send queries
 	cursor = conn.cursor()
 	#executes query
-	query = 'SELECT * FROM user WHERE username = %s'
+	if (type_user == 'cst'):
+		query = ""
+	query = 'SELECT * FROM customer where email = %s'
 	cursor.execute(query, (username))
 	#stores the results in a variable
 	data = cursor.fetchone()
@@ -77,7 +83,7 @@ def registerAuth():
 		error = "This user already exists"
 		return render_template('register.html', error = error)
 	else:
-		ins = 'INSERT INTO user VALUES(%s, %s)'
+		ins = 'INSERT INTO customer VALUES(%s, %s)'
 		cursor.execute(ins, (username, password))
 		conn.commit()
 		cursor.close()
@@ -125,7 +131,7 @@ def search_flights_date():
 	for each in data1:
 		print(each)
 	cursor.close()
-	return render_template('index.html', posts=data1)
+	return render_template('index.html', flights_by_date=data1)
 
 @app.route('/getflightsbynum', methods=['GET', 'POST'])
 def search_flights_num():
@@ -146,7 +152,7 @@ def search_flights_num():
     for each in data1:
         print(each)
     cursor.close()
-    return render_template('index.html', posts=data1)
+    return render_template('index.html', flights_by_num=data1)
 
 @app.route('/logout')
 def logout():
