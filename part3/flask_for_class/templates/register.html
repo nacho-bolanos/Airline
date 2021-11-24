@@ -8,7 +8,7 @@
 	<option value='stf'>Staff</option>
 </select>
 </br>
-	
+
 <input type="button" value = Next onclick='check_type_user()'/>
 </br>
 </br>
@@ -16,7 +16,7 @@
 <a href="/">Go back</a>
 <script>
 	function check_type_user() {
-			var ddm_user = document.getElementById("type_user")
+			var ddm_user = document.getElementById("type_user");
 			var type_user = ddm_user.options[ddm_user.selectedIndex].value;
 			if (type_user == "cst") {
 					document.getElementById('cst_info').innerHTML = 
@@ -100,7 +100,7 @@
 						+ '</form>';
 				}
 			else if (type_user == "stf") {
-					document.getElementById('cst_info').innerHTML = 
+				document.getElementById('cst_info').innerHTML = 
 						'<form action="/registerAuth" method="POST">'
 							+ '<input type="hidden" id="type_user" name="type_user" value="' + type_user + '"'
 							+ '<h7>Personal Info</h7></br>'
@@ -109,6 +109,7 @@
 							+ '<input type="text" name="fname" placeholder="First Name" required/></br>'	
 							+ '<input type="text" name="lname" placeholder="Last Name" required/></br>'	
 							+ '<input type="text" multiple name="phone_nums" placeholder="Format: 123-456-7890" required/></br>'	
+                            + '<input name="works" type="text" placeholder="Company" required/></br>'
 							+ '<label for="date_of_birth">Date of Birth</label></br>'
 							+ '<input id="date_of_birth" name="date_of_birth" type="date" required/></br>'
 						+ '<input type="submit" id="add_cst" value="Submit"/>'

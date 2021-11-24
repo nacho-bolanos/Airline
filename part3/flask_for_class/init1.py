@@ -63,56 +63,64 @@ def registerAuth():
     username  = request.form['username']
     password  = request.form['password']
     type_user = request.form['type_user']
-    # phone_nums = request.form['phone_nums']
-
-    print(type_user)
-    # print(phone_nums)
-    #cursor used to send queries
     cursor = conn.cursor()
-    #executes query
     if (type_user == 'cst'):
         query = "select * from customer where email = %s"
+        cursor.execute(query, (username))
+        data = cursor.fetchone()
+        #use fetchall() if you are expecting more than 1 data row
+        error = None
+        if(data):
+            #If the previous query returns data, then user exists
+            error = "This user already exists"
+            return render_template('register.html', error = error)
+        name = request.form['name']
+        adrr_building_num = request.form['adrr_building_num']
+        adrr_street = request.form['adrr_street']
+        addr_city = request.form['addr_city']
+        addr_state = request.form['addr_state']
+        phone_num = request.form['phone_num']
+        passport_num = request.form['passport_num']
+        passport_exp = request.form['exp_date']
+        passport_country = request.form['passport_country']
+        date_of_birth = request.form['date_of_birth']
+        ins  = 'insert into customer values('
+        ins += '%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+        cursor.execute(ins, (username, password, name, adrr_building_num, adrr_street, addr_city, addr_state, phone_num, passport_num, passport_exp, passport_country, date_of_birth))
     elif (type_user == 'stf'):
         query = "select * from airline_staff where username = %s"
-    cursor.execute(query, (username))
-    #stores the results in a variable
-    data = cursor.fetchone()
-    #use fetchall() if you are expecting more than 1 data row
-    error = None
-    if(data):
-        #If the previous query returns data, then user exists
-        error = "This user already exists"
-        return render_template('register.html', error = error)
-    else:
-        if (type_user == 'cst'):
-            name = request.form['name']
-            adrr_building_num = request.form['adrr_building_num']
-            adrr_street = request.form['adrr_street']
-            addr_city = request.form['addr_city']
-            addr_state = request.form['addr_state']
-            phone_num = request.form['phone_num']
-            passport_num = request.form['passport_num']
-            passport_exp = request.form['exp_date']
-            passport_country = request.form['passport_country']
-            date_of_birth = request.form['date_of_birth']
-            ins  = 'insert into customer values('
-            ins += '%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
-            cursor.execute(ins, (username, password, name, adrr_building_num, adrr_street, addr_city, addr_state, phone_num, passport_num, passport_exp, passport_country, date_of_birth))
-        elif (type_user == 'stf'):
-            fname = request.form('fname')
-            lname = request.form('lname')
-            date_of_birth = request.form('date_of_birth')
-            phone_nums = request.form['phone_nums'].split(', ')
-            ins  = 'insert into ariline_staff values ('
-            ins += '%s, %s, %s, %s)'
-            cursor.execute(ins, (username, password, fname, lname))
-            for num in phone_nums:
-                ins  = 'insert into staff_phonenume values ('
-                ins += '%s, %s)'
-                cursor.execute(ins, (username, num))
-        conn.commit()
-        cursor.close()
-        return render_template('index.html')
+        cursor.execute(query, (username))
+        #stores the results in a variable
+        data = cursor.fetchone()
+        #use fetchall() if you are expecting more than 1 data row
+        error = None
+        if(data):
+            #If the previous query returns data, then user exists
+            error = "This user already exists"
+            return render_template('register.html', error = error)
+        works = request.form['works']
+        query = "select * from airline where name = %s"
+        cursor.execute(query, (works))
+        if not cursor.fetchone():
+            error = "This company does not exists"
+            return render_template('register.html', error = error)
+        fname = request.form['fname']
+        lname = request.form['lname']
+        date_of_birth = request.form['date_of_birth']
+        phone_nums = request.form['phone_nums'].split(', ')
+        ins  = 'insert into airline_staff values ('
+        ins += '%s, %s, %s, %s)'
+        cursor.execute(ins, (username, password, fname, lname))
+        for num in phone_nums:
+            ins  = 'insert into staff_phonenum values ('
+            ins += '%s, %s)'
+            cursor.execute(ins, (username, num))
+        query  = 'insert into works values ('
+        query += '%s, %s)'
+        cursor.execute(query, (username, works))
+    conn.commit()
+    cursor.close()
+    return render_template('index.html')
 
 @app.route('/home')
 def home():
