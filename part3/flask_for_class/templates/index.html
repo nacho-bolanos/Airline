@@ -1,129 +1,31 @@
+<!-- vim app001/templates/login.html -->
+
 <!DOCTYPE html>
 <html>
+	<head>
+		<meta charset="utf-8">
+		<title>Login</title>
 
-<head>
+	</head>
+	<body>
+			<h1>Login</h1>
 
-</head>
-
-<body>
-{% if not message %}
-	<a href="/login">Login</a>
-	<a href="/register">Register</a>
-
-<form action="/getflightsbydate" id='flight_date' method="POST">
-	<h1>Welcome to NYU Airlines</h1>
-    <h4>Search for flights (by place)</h4>
-	<input type="text" name = "source" placeholder="Leaving from" required/> </br>
-	<input type="text" name = "destination" placeholder="Going to" required/> </br>
-    <label for="date">Departure Date</label>
-    <input id='date' name="dept_date"type='date' required/></br>
-    <label for="roundtrip" style="padding: 10px 5px 0 0;">Round trip</label>
-    <input type='button' id='roundtrip' onclick='round()' style ="height:15px;width:15px;"></br>
-    <div id='return' value=return-date> </div>
-	<input type="submit" id='flightsrcdst' value ='Search'/>
-</form>
-<table>
-   <th>Airline</th>
-   <th>Flight Number</th>
-   <th>Arrival</th>
-   <th>Arrival Date</th>
-   <th>Departure</th>
-   <th>Departure Date</th>
-{% for line in flights_by_date %}
-   <tr>
-	  <td>{{line['airline_name']}}</td>
-	  <td>{{line['flight_num']}}</td>
-	  <td>{{line['arr_name']}}</td>
-	  <td>{{line['arr_date_time']}}</td>
-	  <td>{{line['dept_name']}}</td>
-	  <td>{{line['dept_date_time']}}</td>
-   </tr>
-{% endfor %}
-</table>
-
-<script>
-    function round() {
-            document.getElementById("return").innerHTML=
-                '<input id ="date" name="return_date" type="date" required/></br>';
-        }
-        function flight_flight_num() {
-            document.getElementById('flight_flightnum').innerHTML = 
-                '<table>'
-                   + '<th>Airline</th>'
-                   + '<th>Flight Number</th>'
-                   + '<th>Status</th>'
-                   + '{%for line in posts %}'
-                      + '<tr>'
-                           + '<td>{{line['airline_name']}}</td>'
-                           + '<td>{{line['flight_num']}}</td>'
-                           + '<td>{{line['status']}}</td>'
-                      + '</tr>'
-                    + '{% endfor %}'
-                + '</table>';
-            return false;
-        }
-</script>
+			<div class="links">
+				<a href="{{ url_for('login') }}" class="active">Login</a>
+			</div>
 
 
-<style type="text/css">
-	table, th, td{
-		border: 1px solid black;
-	}
-    .container
-    {
-      width:110px;
-      border:4px #0000ffff; 
-      overflow: hidden;
-    }
-    .text
-    {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        display: block; 
-    }
-</style>
+    </form>
+	<br>
+	<!--
 
-<form action='/getflightsbynum' method='POST'>
-    <h4>Search for flights (by flight number)</h4>
-	<input type="text" name = "airline" placeholder="Airline" required/> </br>
-	<input type="text" name = "flight_num" placeholder="Flight number" required/> </br>
-	<input type="text" name = "arr_dept" placeholder="Arrival/Departure" required/> </br>
-	<input type="submit" value ="Search"/>
-</form>
-<table>
-	   <th>Airline</th>
-	   <th>Flight Number</th>
-	   <th>Status</th>
-	   {%for line in flights_by_num %}
-		  <tr>
-			   <td>{{line['airline_name']}}</td>
-			   <td>{{line['flight_num']}}</td>
-			   <td>{{line['status']}}</td>
-		  </tr>
-		{% endfor %}
-	</table>
+	  -->
+
+	{{flights_by_num}}
+	<br>
+	{{flights_by_num}}
 
 
-{% endif %}
 
-{% if message %}
-	<a href="/logout">Logout</a>
-	<a href="/remove_account">Remove Account</a>
-	<p class="message">You are logged in {{message}}. You have {{num}} follower(s)</p> </br>
-	<a href="/tweets">View your tweets</a> </br>
-	<a href="/find_people">Find people to follow</a> </br>
-	<a href="/unfollow">Unfollow someone</a> </br>
-	<a href="/view_followed">View people you have followed</a> </br>
-	</br>
-
-        <h4>15 most recent tweets from you and your followers </h4> </br>
-
-	{% for line in tweets%}
-	        <p>{{line}}</p>
-	        <hr>
-	{% endfor %}
-	{% endif %}
-</body>
-
+	</body>
 </html>

@@ -1,19 +1,97 @@
 <html>
-<head>
-</head>
-<body>
-<form action="/loginAuth" method="POST">
-	<input type="text" name = "username" placeholder="username" required/> </br>
-	<input type="password" name = "password" placeholder="password" required/></br>
-	<input type="submit" value = Login />
-	{% if error %}
-		<p class="error"><strong>Error:</strong> {{error}}</p>
-	{% endif %}
-</form>
+    <head>
+        <meta charset="utf-8">
 
-<a href="/">Go back</a>
+        <title>Login / REGISTER </title>
+        <link rel="stylesheet" href="/static/style.css">
+    </head>
+    <body>
+        <div class="wrap">
+            <div class="form-wrap">
+                <div class="button-wrap">
+                    <div id="btn"></div>
+                    <button type="button" class="togglebtn" onclick="login()">LOG IN</button>
+                    <button type="button" class="togglebtn" onclick="register()">REGISTER</button>
+                </div>
 
-</body>
+				<!--
+				       * @app.route('/loginAuth') connects to this part.
+						This is because they set the form action = '/loginAuth'.
+				       * GET and POST were used and request.form() was used in the process 
+						of passing the value from the frontend to the backend.
+				-->
+
+                <form id="login" action="/loginAuth" class="input-group" method="post">
+                    <center>
+                       <table align="center">
+                        <tr>
+                            <td width="100">
+                                <!--
+                                * <input name='type'> is connected with loginType = request.form['type'] 가 이어지는 것입니다.
+                                That is, if you press the customer button here, 
+								the type value is called, and because the value is customer, loginType becomes customer.
+                                -->
+                                <input type="radio" name="type" value="customer" checked=True>customer
+                            </td>
+                            <td>
+                                <input type="radio" name="type" value="works">staff
+                            </td>
+
+                        </tr>
+                    </table>
+                    </center>
+
+                   <br><br>
+                    <!--
+                    username = request.form['username']
+                    password = request.form['password']
+                    -->
+                    <input type="text" class="input-field" placeholder="User name or Email" name="username" required>
+                    <input type="password" class="input-field" placeholder="Enter Password" name="password" required>
+                    <br><br>
+                    <button class="submit">Login</button>
+                </form>
+
+                
+                <form id="register" action="/registerAuth" class="input-group" method="post">
+                    <center>
+                       <table align="center">
+                        <tr>
+                            <td width="100">
+                                <input type="radio" name="kind" value="customer" checked=True>customer
+                            </td>
+                            <td>
+                                <input type="radio" name="kind" value="works">staff
+                            </td>
+
+                        </tr>
+                    </table>
+                    </center>
+
+                    <input type="text" class="input-field" placeholder="User name or Email" name="username" required>
+                    <input type="email" class="input-field" placeholder="Your Email" required>
+                    <input type="password" class="input-field" placeholder="Enter Password" required>
+                    <button class="submit">REGISTER</button>
+                </form>
+            </div>
+        </div>
+        <script>
+            var x = document.getElementById("login");
+            var y = document.getElementById("register");
+            var z = document.getElementById("btn");
 
 
+            function login(){
+                x.style.left = "50px";
+                y.style.left = "450px";
+                z.style.left = "0";
+            }
+
+            function register(){
+                x.style.left = "-400px";
+                y.style.left = "50px";
+                z.style.left = "110px";
+            }
+        </script>
+    </body>
 </html>
