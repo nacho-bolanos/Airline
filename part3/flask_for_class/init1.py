@@ -122,27 +122,77 @@ def registerAuth():
     cursor.close()
     return render_template('index.html')
 
-@app.route('/home')
-def home():
+@app.route('/home_cst')
+def home_cst():
     
-    username = session['username']
-    cursor = conn.cursor();
-    query = 'SELECT ts, blog_post FROM blog WHERE username = %s ORDER BY ts DESC'
-    cursor.execute(query, (username))
-    data1 = cursor.fetchall() 
-    for each in data1:
-        print(each['blog_post'])
-    cursor.close()
-    return render_template('home.html', username=username, posts=data1)
+    # username = session['username']
+    # cursor = conn.cursor();
+    # query = 'SELECT ts, blog_post FROM blog WHERE username = %s ORDER BY ts DESC'
+    # cursor.execute(query, (username))
+    # data1 = cursor.fetchall() 
+    # for each in data1:
+    #     print(each['blog_post'])
+    # cursor.close()
+    return render_template('home_cst.html')
 
-        
+@app.route('/getflightsbydatecst', methods=['GET', 'POST'])
+def search_flights_date_cst():
+    cursor = conn.cursor();
+    source = request.form['source']
+    dest = request.form['destination']
+    dept_date = request.form['dept_date']
+    query =  'select distinct o.airline_name, f.flight_num, a1.name '
+    query += 'as arr_name, f.dept_date_time, a2.name as dept_name, f.arr_date_time from flight f, operates o, airport a1, airport a2 '
+    query += 'where ((f.flight_num = o.flight_num and a1.code = f.arr_airport '
+    query += 'and a2.code = f.dept_airport '
+    query += 'and ("{}" = a1.city or "{}" = a1.name or "{}" = a1.code) '.format(dest, dest, dest)
+    query += 'and ("{}" = a2.city or "{}" = a2.name or "{}" = a2.code) '.format(source, source, source)
+    query += 'and (date(f.dept_date_time) = "{}"))'.format(dept_date)
+    if "return_date" in request.form:
+        return_date = request.form['return_date']
+        query += 'or ((f.flight_num = o.flight_num and a1.code = f.arr_airport '
+        query += 'and a2.code = f.dept_airport '
+        query += 'and ("{}" = a2.city or "{}" = a2.name or "{}" = a2.code) '.format(dest, dest, dest)
+        query += 'and ("{}" = a1.city or "{}" = a1.name or "{}" = a1.code) '.format(source, source, source)
+        query += 'and (date(f.dept_date_time) = "{}")))'.format(return_date)
+    query += ')'
+    # print(query)
+    cursor.execute(query)
+    conn.commit()
+    data1 = cursor.fetchall()
+    for each in data1:
+        print(each)
+    cursor.close()
+    return render_template('home_cst.html', flights_by_date=data1)
+
+@app.route('/getflightsbynumcst', methods=['GET', 'POST'])
+def search_flights_num_cst():
+    cursor = conn.cursor();
+    airline = request.form['airline']
+    flight_num = request.form['flight_num']
+    arr_dept = request.form['arr_dept']
+    query =  'select distinct f.status, f.flight_num, o.airline_name, f.base_price from flight f, airport a, operates o '
+    query += 'where f.flight_num = "{}" '.format(flight_num)
+    query += 'and o.flight_num = f.flight_num '
+    query += 'and o.airline_name = "{}" '.format(airline)
+    query += 'and (f.arr_airport = a.code or f.dept_airport = a.code) '
+    query += 'and (a.code = "{}" or a.name = "{}" or a.city = "{}") '.format(arr_dept, arr_dept, arr_dept)
+    print(query)
+    cursor.execute(query)
+    conn.commit()
+    data1 = cursor.fetchall()
+    for each in data1:
+        print(each)
+    cursor.close()
+    return render_template('home_cst.html', flights_by_num=data1)
+       
 @app.route('/getflightsbydate', methods=['GET', 'POST'])
 def search_flights_date():
     cursor = conn.cursor();
     source = request.form['source']
     dest = request.form['destination']
     dept_date = request.form['dept_date']
-    query =  'select distinct o.airline_name, f.flight_num, a1.name '
+    query =  'select distinct o.airline_name, f.flight_num, a1.name, f.base_price '
     query += 'as arr_name, f.dept_date_time, a2.name as dept_name, f.arr_date_time from flight f, operates o, airport a1, airport a2 '
     query += 'where ((f.flight_num = o.flight_num and a1.code = f.arr_airport '
     query += 'and a2.code = f.dept_airport '
@@ -186,6 +236,10 @@ def search_flights_num():
         print(each)
     cursor.close()
     return render_template('index.html', flights_by_num=data1)
+
+@app.route('/buyhome')
+def buyhome():
+    return render_template('buyticket.html')
 
 @app.route('/logout')
 def logout():

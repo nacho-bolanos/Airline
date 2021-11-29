@@ -6,11 +6,8 @@
 </head>
 
 <body>
-{% if not message %}
-	<a href="/login">Login</a>
-	<a href="/register">Register</a>
 
-<form action="/getflightsbydate" id='flight_date' method="POST">
+<form action="/getflightsbydatecst" id='flight_date' method="POST">
 	<h1>Welcome to NYU Airlines</h1>
     <h4>Search for flights (by place)</h4>
 	<input type="text" name = "source" placeholder="Leaving from" required/> </br>
@@ -29,6 +26,7 @@
    <th>Arrival Date</th>
    <th>Departure</th>
    <th>Departure Date</th>
+   <th>Price</th>
 {% for line in flights_by_date %}
    <tr>
 	  <td>{{line['airline_name']}}</td>
@@ -37,6 +35,7 @@
 	  <td>{{line['arr_date_time']}}</td>
 	  <td>{{line['dept_name']}}</td>
 	  <td>{{line['dept_date_time']}}</td>
+      <td><a href="/buyhome">${{line['base_price']}}</a></td>
    </tr>
 {% endfor %}
 </table>
@@ -84,7 +83,7 @@
     }
 </style>
 
-<form action='/getflightsbynum' method='POST'>
+<form action='/getflightsbynumcst' method='POST'>
     <h4>Search for flights (by flight number)</h4>
 	<input type="text" name = "airline" placeholder="Airline" required/> </br>
 	<input type="text" name = "flight_num" placeholder="Flight number" required/> </br>
@@ -95,17 +94,18 @@
 	   <th>Airline</th>
 	   <th>Flight Number</th>
 	   <th>Status</th>
+	   <th>Price</th>
 	   {%for line in flights_by_num %}
 		  <tr>
 			   <td>{{line['airline_name']}}</td>
 			   <td>{{line['flight_num']}}</td>
-			   <td>{{line['status']}}</td>
+               <td>{{line['status']}}</td>
+               <td><a href="/buyhome">${{line['base_price']}}</a></td>
 		  </tr>
 		{% endfor %}
 	</table>
 
 
-{% endif %}
 
 {% if message %}
 	<a href="/logout">Logout</a>
