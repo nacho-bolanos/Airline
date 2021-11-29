@@ -1,0 +1,124 @@
+<html>
+<head>
+</head>
+<body>
+<select name='type_user'id='type_user' >
+	<option value=''>-- Please select type of user --</option>
+	<option value='cst'>Customer</option>
+	<option value='stf'>Staff</option>
+</select>
+</br>
+
+<input type="button" value = Next onclick='check_type_user()'/>
+</br>
+</br>
+<div id="cst_info" value="cast-info"></div>
+<a href="/">Go back</a>
+<script>
+	function check_type_user() {
+			var ddm_user = document.getElementById("type_user");
+			var type_user = ddm_user.options[ddm_user.selectedIndex].value;
+			if (type_user == "cst") {
+					document.getElementById('cst_info').innerHTML = 
+						'<form action="/registerAuth" method="POST">'
+							+ '<input type="hidden" id="type_user" name="type_user" value="' + type_user + '"'
+							+ '<h7>Personal Info</h7></br>'
+							+ '<input type="email" name = "username" placeholder="Email Address" required/> </br>'
+							+ '<input type="password" name = "password" placeholder="Password" required/></br>'
+							+ '<input type="text" name="name" placeholder="Full Name" required/></br>'	
+							+ '<input type="tel" name="phone_num" placeholder="Phone Number" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" required/></br></nr>'	
+							+ '<small>Format: 123-456-7890</small><br><br>'
+							+ '<h7>Address</h7></br>'
+							+ '<input type="text" name="adrr_street" placeholder="Address Line 1" required/></br>'	
+							+ '<input type="text" name="adrr_building_num" placeholder="Address Line 2" required/></br>'	
+							+ '<input type="text" name="addr_city" placeholder="City" required/></br>'	
+							+ '<select name="addr_state" id="addr_state" required/>'
+								+ '<option value="">-- Please select your state--</option>'
+								+ '<option value="AL">Alabama</option>'
+								+ '<option value="AK">Alaska</option>'
+								+ '<option value="AZ">Arizona</option>'
+								+ '<option value="AR">Arkansas</option>'
+								+ '<option value="CA">California</option>'
+								+ '<option value="CO">Colorado</option>'
+								+ '<option value="CT">Connecticut</option>'
+								+ '<option value="DE">Delaware</option>'
+								+ '<option value="DC">District Of Columbia</option>'
+								+ '<option value="FL">Florida</option>'
+								+ '<option value="GA">Georgia</option>'
+								+ '<option value="HI">Hawaii</option>'
+								+ '<option value="ID">Idaho</option>'
+								+ '<option value="IL">Illinois</option>'
+								+ '<option value="IN">Indiana</option>'
+								+ '<option value="IA">Iowa</option>'
+								+ '<option value="KS">Kansas</option>'
+								+ '<option value="KY">Kentucky</option>'
+								+ '<option value="LA">Louisiana</option>'
+								+ '<option value="ME">Maine</option>'
+								+ '<option value="MD">Maryland</option>'
+								+ '<option value="MA">Massachusetts</option>'
+								+ '<option value="MI">Michigan</option>'
+								+ '<option value="MN">Minnesota</option>'
+								+ '<option value="MS">Mississippi</option>'
+								+ '<option value="MO">Missouri</option>'
+								+ '<option value="MT">Montana</option>'
+								+ '<option value="NE">Nebraska</option>'
+								+ '<option value="NV">Nevada</option>'
+								+ '<option value="NH">New Hampshire</option>'
+								+ '<option value="NJ">New Jersey</option>'
+								+ '<option value="NM">New Mexico</option>'
+								+ '<option value="NY">New York</option>'
+								+ '<option value="NC">North Carolina</option>'
+								+ '<option value="ND">North Dakota</option>'
+								+ '<option value="OH">Ohio</option>'
+								+ '<option value="OK">Oklahoma</option>'
+								+ '<option value="OR">Oregon</option>'
+								+ '<option value="PA">Pennsylvania</option>'
+								+ '<option value="RI">Rhode Island</option>'
+								+ '<option value="SC">South Carolina</option>'
+								+ '<option value="SD">South Dakota</option>'
+								+ '<option value="TN">Tennessee</option>'
+								+ '<option value="TX">Texas</option>'
+								+ '<option value="UT">Utah</option>'
+								+ '<option value="VT">Vermont</option>'
+								+ '<option value="VA">Virginia</option>'
+								+ '<option value="WA">Washington</option>'
+								+ '<option value="WV">West Virginia</option>'
+								+ '<option value="WI">Wisconsin</option>'
+								+ '<option value="WY">Wyoming</option>'
+							+ '</select></br></br>'
+							+ '<h7>Passport Information</h7></br>'
+							+ '<input type="text" name="passport_num" placeholder="Passport Number" required/></br>'	
+							+ '<input type="text" name="passport_country" placeholder="Passport Country" required/></br>'	
+							+ '<label for="exp">Expiration Date</label></br>'
+							+ '<input id="exp" name="exp_date" type="date" required/></br>'
+							+ '<label for="date_of_birth">Date of Birth</label></br>'
+							+ '<input id="date_of_birth" name="date_of_birth" type="date" required/></br>'
+						+ '<input type="submit" id="add_cst" value="Submit"/>'
+						+ '	{% if error %}'
+							+ '<p class="error"><strong>Error:</strong> {{error}}</p>'
+						+ '{% endif %}'
+						+ '</form>';
+				}
+			else if (type_user == "stf") {
+				document.getElementById('cst_info').innerHTML = 
+						'<form action="/registerAuth" method="POST">'
+							+ '<input type="hidden" id="type_user" name="type_user" value="' + type_user + '"'
+							+ '<h7>Personal Info</h7></br>'
+							+ '<input type="email" name = "username" placeholder="Email Address" required/> </br>'
+							+ '<input type="password" name = "password" placeholder="Password" required/></br>'
+							+ '<input type="text" name="fname" placeholder="First Name" required/></br>'	
+							+ '<input type="text" name="lname" placeholder="Last Name" required/></br>'	
+							+ '<input type="text" multiple name="phone_nums" placeholder="Format: 123-456-7890" required/></br>'	
+                            + '<input name="works" type="text" placeholder="Company" required/></br>'
+							+ '<label for="date_of_birth">Date of Birth</label></br>'
+							+ '<input id="date_of_birth" name="date_of_birth" type="date" required/></br>'
+						+ '<input type="submit" id="add_cst" value="Submit"/>'
+						+ '	{% if error %}'
+							+ '<p class="error"><strong>Error:</strong> {{error}}</p>'
+						+ '{% endif %}'
+						+ '</form>';
+				}
+		}
+</script>
+</body>
+</html>
