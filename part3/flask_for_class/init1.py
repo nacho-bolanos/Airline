@@ -28,33 +28,46 @@ def login():
 def register():
     return render_template('register.html')
 
-#Authenticates the login
+  
+# Authenticates the login
 @app.route('/loginAuth', methods=['GET', 'POST'])
 def loginAuth():
-    #grabs information from the forms
+    # grabs information from the forms
     username = request.form['username']
     password = request.form['password']
-
-
-    #cursor used to send queries
+    loginType = request.form['type']
+    print(loginType)
+    # cursor used to send queries
     cursor = conn.cursor()
-    #executes query
-    query = 'SELECT * FROM user WHERE username = %s and password = %s'
+    query =''
+    # executes query
+
+    #The sql statement changes according to the radio button(html).
+    #Since the PW is md5 encrypted, it will be accurately authenticated by md5(%s) when it is retrieved.
+    if loginType == 'customer':
+        query = 'SELECT * FROM customer WHERE email = %s and password = md5(%s)'
+    elif loginType == 'works':
+        query = 'SELECT * FROM airline_staff WHERE username = %s and password = md5(%s)'
+
+    print(query)
     cursor.execute(query, (username, password))
-    #stores the results in a variable
+    # stores the results in a variable
     data = cursor.fetchone()
-    #use fetchall() if you are expecting more than 1 data row
+    # use fetchall() if you are expecting more than 1 data row
     cursor.close()
     error = None
-    if(data):
-        #creates a session for the the user
-        #session is a built in
+    if (data):
+        # creates a session for the the user
+        # session is a built in
         session['username'] = username
+        #This is the part that goes to @app.route('/home').
         return redirect(url_for('home'))
     else:
-        #returns an error message to the html page
+        # returns an error message to the html page
         error = 'Invalid login or username'
+        #To display errors
         return render_template('login.html', error=error)
+      
 
 #Authenticates the register
 @app.route('/registerAuth', methods=['GET', 'POST'])
