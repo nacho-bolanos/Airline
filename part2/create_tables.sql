@@ -5,7 +5,7 @@ create table customer (
     email varchar(100) primary key,
     password varchar(50),
     name varchar(50),
-    adrr_building_num int,
+    adrr_building_num varchar(50),
     adrr_street varchar(100),
     addr_city varchar(100),
     addr_state varchar(50),
@@ -115,6 +115,8 @@ create table purchase (
     card_exp date,
     purchase_date_time datetime,
     capacity int,
+    flight_num int,
     foreign key (email) references customer(email),
+    foreign key (flight_num)  references flight(flight_num),
     foreign key (ticket_id) references ticket(ticket_id)
 );

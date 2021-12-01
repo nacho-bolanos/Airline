@@ -55,21 +55,21 @@ insert into flight_info (flight_num, ticket_id, sold_price) values (234, 4, 540)
 insert into flight_info (flight_num, ticket_id, sold_price) values (234, 5, 540);
 insert into flight_info (flight_num, ticket_id, sold_price) values (124, 8, 375);
 
-insert into purchase (email, ticket_id, card_type, card_num, card_name, card_exp, purchase_date_time ) 
-values ("jaeha@gmail.com", 1, "credit", 1234566787, "Jaeha Huh", '2024-09-01', '2021-11-10 11:00:00');
+insert into purchase (email, ticket_id, card_type, card_num, card_name, card_exp, purchase_date_time, flight_num) 
+values ("jaeha@gmail.com", 1, "credit", 1234566787, "Jaeha Huh", '2024-09-01', '2021-11-10 11:00:00', 123);
 
-insert into purchase (email, ticket_id, card_type, card_num, card_name, card_exp, purchase_date_time ) 
-values ("jose@gmail.com", 2, "credit", 1234566787, "Jose Bolanos", '2024-10-01', '2021-09-10 14:00:00');
+insert into purchase (email, ticket_id, card_type, card_num, card_name, card_exp, purchase_date_time, flight_num ) 
+values ("jose@gmail.com", 2, "credit", 1234566787, "Jose Bolanos", '2024-10-01', '2021-09-10 14:00:00', 123);
 
-insert into purchase (email, ticket_id, card_type, card_num, card_name, card_exp, purchase_date_time ) 
-values ("mat@gmail.com", 3, "debit", 1234566787, "Mat Brown", '2024-01-01', '2021-11-10 18:00:00');
+insert into purchase (email, ticket_id, card_type, card_num, card_name, card_exp, purchase_date_time, flight_num ) 
+values ("mat@gmail.com", 3, "debit", 1234566787, "Mat Brown", '2024-01-01', '2021-11-10 18:00:00', 124);
 
-insert into purchase (email, ticket_id, card_type, card_num, card_name, card_exp, purchase_date_time ) 
-values ("jaeha@gmail.com", 4, "credit", 1234566787, "Jaeha Huh", '2024-09-01', '2021-08-10 12:00:00');
+insert into purchase (email, ticket_id, card_type, card_num, card_name, card_exp, purchase_date_time, flight_num ) 
+values ("jaeha@gmail.com", 4, "credit", 1234566787, "Jaeha Huh", '2024-09-01', '2021-08-10 12:00:00', 234);
 
-insert into purchase (email, ticket_id, card_type, card_num, card_name, card_exp, purchase_date_time ) 
-values ("jose@gmail.com", 5, "credit", 1234566787, "Jose Bolanos", '2024-10-01', '2021-09-10 14:00:00');
+insert into purchase (email, ticket_id, card_type, card_num, card_name, card_exp, purchase_date_time, flight_num) 
+values ("jose@gmail.com", 5, "credit", 1234566787, "Jose Bolanos", '2024-10-01', '2021-09-10 14:00:00', 124);
 
-insert into purchase (email, ticket_id, card_type, card_num, card_name, card_exp, purchase_date_time ) 
-values ("mat@gmail.com", 8, "debit", 1234566787, "Mat Brown", '2024-01-01', '2021-11-18 20:00:00');
+insert into purchase (email, ticket_id, card_type, card_num, card_name, card_exp, purchase_date_time, flight_num) 
+values ("mat@gmail.com", 8, "debit", 1234566787, "Mat Brown", '2024-01-01', '2021-11-18 20:00:00', 234);
 

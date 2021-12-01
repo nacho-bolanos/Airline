@@ -1,3 +1,4 @@
+#!/usr/bin/python
 #Import Flask Library
 from flask import Flask, render_template, request, session, url_for, redirect
 import pymysql.cursors
@@ -28,7 +29,41 @@ def login():
 def register():
     return render_template('register.html')
 
-  
+#Define route for rating
+@app.route('/rating')
+def rating():
+    username = session['username']
+    cursor = conn.cursor()
+    query = 'select distinct flight_num, rating, comments from rate where email = %s'
+    cursor.execute(query, (username))
+    rates = cursor.fetchall()
+    for line in rates:
+        print(line)
+    return render_template('rating.html', rates=rates)
+
+@app.route('/pushRating', methods=['GET', "POST"])
+def pushRate():
+    username = session['username']
+    flight_num = request.form['flight_num']
+    num_rate = request.form['rating']
+    comment = request.form['comment']
+    cursor = conn.cursor()
+    query = 'select * from purchase where flight_num = %s and email = %s'
+    cursor.execute(query, (flight_num, username))
+    onthisflight = cursor.fetchall()
+    error = None
+    print(onthisflight)
+    if not onthisflight:
+        error = "Customer did not take this flight, can't rate."
+        return render_template('rating.html', error=error)
+    query  = 'insert into rate values( '
+    query += '%s, %s, %s, %s)'
+    cursor.execute(query, (flight_num, username, num_rate, comment))
+    print(cursor.fetchall())
+    conn.commit()
+    cursor.close()
+    return redirect(url_for('rating'))
+
 # Authenticates the login
 @app.route('/loginAuth', methods=['GET', 'POST'])
 def loginAuth():
@@ -46,6 +81,7 @@ def loginAuth():
     #Since the PW is md5 encrypted, it will be accurately authenticated by md5(%s) when it is retrieved.
     if loginType == 'customer':
         query = 'SELECT * FROM customer WHERE email = %s and password = md5(%s)'
+        print(query)
     elif loginType == 'works':
         query = 'SELECT * FROM airline_staff WHERE username = %s and password = md5(%s)'
 
@@ -61,7 +97,10 @@ def loginAuth():
         # session is a built in
         session['username'] = username
         #This is the part that goes to @app.route('/home').
-        return redirect(url_for('home'))
+        if loginType == 'customer':
+            return redirect(url_for('home_cst'))
+        elif loginType == 'works':
+            return redirect(url_for('home_stf'))
     else:
         # returns an error message to the html page
         error = 'Invalid login or username'
@@ -98,7 +137,7 @@ def registerAuth():
         passport_country = request.form['passport_country']
         date_of_birth = request.form['date_of_birth']
         ins  = 'insert into customer values('
-        ins += '%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+        ins += '%s, md5(%s), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
         cursor.execute(ins, (username, password, name, adrr_building_num, adrr_street, addr_city, addr_state, phone_num, passport_num, passport_exp, passport_country, date_of_birth))
     elif (type_user == 'stf'):
         query = "select * from airline_staff where username = %s"
@@ -122,7 +161,7 @@ def registerAuth():
         date_of_birth = request.form['date_of_birth']
         phone_nums = request.form['phone_nums'].split(', ')
         ins  = 'insert into airline_staff values ('
-        ins += '%s, %s, %s, %s)'
+        ins += '%s, md5(%s), %s, %s)'
         cursor.execute(ins, (username, password, fname, lname))
         for num in phone_nums:
             ins  = 'insert into staff_phonenum values ('
@@ -138,15 +177,13 @@ def registerAuth():
 @app.route('/home_cst')
 def home_cst():
     
-    # username = session['username']
-    # cursor = conn.cursor();
-    # query = 'SELECT ts, blog_post FROM blog WHERE username = %s ORDER BY ts DESC'
-    # cursor.execute(query, (username))
-    # data1 = cursor.fetchall() 
-    # for each in data1:
-    #     print(each['blog_post'])
-    # cursor.close()
-    return render_template('home_cst.html')
+    username = session['username']
+    print(username)
+    cursor = conn.cursor();
+    query = 'select name from customer where email = %s'
+    cursor.execute(query, (username))
+    cst_name = cursor.fetchone() 
+    return render_template('home_cst.html', name=cst_name['name'])
 
 @app.route('/getflightsbydatecst', methods=['GET', 'POST'])
 def search_flights_date_cst():
