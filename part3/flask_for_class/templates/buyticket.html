@@ -2,16 +2,31 @@
 <head>
 </head>
 <body>
-<form action="/buyticket" method="POST">
-	<input type="text" name = "username" placeholder="username" required/> </br>
-	<input type="password" name = "password" placeholder="password" required/></br>
-	<input type="submit" value = Login />
-	{% if error %}
-		<p class="error"><strong>Error:</strong> {{error}}</p>
-	{% endif %}
+<h1>Buying ticket</h1>
+<form action={{url_for('buyticket', flight_num=flight_num, airline=airline)}} method="POST">
+    <h3>Payment Info</h3>
+    <label for='card_type'>Card Type</label></br>
+    <select name='card_type'id='card_typetype' required>
+	    <option value=''>-- Please select type of card --</option>
+	    <option value='dbt'>Debit Card</option>
+	    <option value='crd'>Credit Card</option>
+    </select></br>
+    <label for='card_name'>Name</label></br>
+    <input type='text' name='card_name' required></br>
+    <label for='card_num'>Card Number</label></br>
+    <input type='int' name='card_num'required></br>
+    <label for='card_exp'>Card Expiration Date</label></br>
+    <input type='date' name='card_exp'required></br>
+    <br><input type='submit' onclick='errorfunc()' value='Buy ticket'></br>
 </form>
 
-<a href="/">Go back</a>
+{% if error %}
+    <script>
+            function errorfunc() {
+                                alert({{error}});
+                        }
+    </script>
+{% endif %}
 
 </body>
 

@@ -1,0 +1,127 @@
+<html>
+<head>
+</head>
+ <body>
+<button class="tablink" onclick="location.href='/home_cst'">Home</button>
+<button class="tablink" onclick="location.href='/rating'">Rating</button>
+<button class="tablink" onclick="location.href='/history'">History</button>
+<button class="tablink" onclick="location.href='/logout'">Log Out</button>
+<form action="/rating" name='rating' id='rating'>
+</form>
+
+<script>
+    function submitform(){
+        document.forms["rating"].submit();
+    }
+</script>
+
+<style type="text/css">
+    body, html {
+       margin: 0px;
+       min-height: 100%;
+       width: 100%;
+    }
+
+	table, th, td{
+		border: 1px solid black;
+	}
+
+    .tablink 
+    {
+        background-color: #555;
+        color: white;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 10px 16px 10px 16px;
+        font-size: 100%;
+        width: 25%;
+        position: relative;
+    }
+
+</style>
+<div style='clear: both'>
+    <h2 style='float: left'>Money spent in the last year</h2>
+    <h2 style='float: right'>${{total_spent}}</h2>
+</div>
+<br>
+<br>
+<br>
+</br>
+
+<table>
+	<th>Month</th>
+	<th>Money Spent</th>
+
+{% for month in past_six %}
+	<tr>
+		<td>{{month}}</td>
+		<td>${{past_six[month]}}</td>
+	</tr>
+{% endfor %}
+</table>
+
+
+<form action="/gethistorybydate" id='history_date' method='POST'>
+    <h4>Search by date</h4>
+    <label for='start_date'>Start Date</label>
+    <input type='date' name='start_date' required/></br>
+    <label for='end_date'>End Date</label>
+    <input type='date' name='end_date' required/></br>
+    <input type=submit = id='historydate' value='Submit'/>
+</form>
+
+{% if error %}
+    <p class="error"><strong>Error:</strong><{{error}}</p>
+{% endif%}
+
+<div style='clear: both'>
+    <h2 style='float: left'>Money spent between {{start_month}} and {{end_month}}</h2>
+    <h2 style='float: right'>${{total_spent_interval}}</h2>
+</div>
+<br>
+<br>
+<br>
+</br>
+
+
+<table>
+    <th>Purchase Date</th>
+    <th>Ticket ID</th>
+    <th>Price</th>
+
+    {% for line in history_date %}
+        <tr>
+            <td>{{line['date(p.purchase_date_time)']}}</td>
+            <td>{{line['ticket_id']}}</td>
+            <td>{{line['sale_price']}}</td>
+        </tr>
+    {% endfor %}
+</table>
+
+<h2>Past Flights</h2>
+<table>
+   <th>Airline</th>
+   <th>Flight Number</th>
+   <th>Arrival</th>
+   <th>Arrival Date</th>
+   <th>Departure</th>
+   <th>Departure Date</th>
+{% for line in bought_flights %}
+   <tr>
+	  <td>{{line['airline_name']}}</td>
+	  <td>{{line['flight_num']}}</td>
+	  <td>{{line['arr_name']}}</td>
+	  <td>{{line['arr_date_time']}}</td>
+	  <td>{{line['dept_name']}}</td>
+	  <td>{{line['dept_date_time']}}</td>
+   </tr>
+{% endfor %}
+</table>
+       
+
+</body>
+
+
+</html>

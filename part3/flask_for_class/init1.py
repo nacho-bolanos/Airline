@@ -1,7 +1,7 @@
-#!/usr/bin/python
 #Import Flask Library
 from flask import Flask, render_template, request, session, url_for, redirect
 import pymysql.cursors
+from datetime import datetime
 
 #Initialize the app from Flask
 app = Flask(__name__)
@@ -56,6 +56,13 @@ def pushRate():
     if not onthisflight:
         error = "Customer did not take this flight, can't rate."
         return render_template('rating.html', error=error)
+    query = 'select * from flight where flight_num = %s and dept_date_time < SYSDATE()'
+    cursor.execute(query, (flight_num))
+    tookflight = cursor.fetchall()
+    error = None
+    if not tookflight:
+        error = "Flight has not yet passed, can't rate."
+        return render_template('rating.html', error=error)
     query  = 'insert into rate values( '
     query += '%s, %s, %s, %s)'
     cursor.execute(query, (flight_num, username, num_rate, comment))
@@ -63,6 +70,62 @@ def pushRate():
     conn.commit()
     cursor.close()
     return redirect(url_for('rating'))
+
+# Define route for history
+@app.route('/history')
+def history():
+    months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    username = session['username']
+    cursor = conn.cursor()
+    query = 'select sum(fi.sold_price) from flight_info fi, purchase p where p.email = %s and p.purchase_date_time between date_sub(now(), interval 1 year) and now() and fi.ticket_id = p.ticket_id'
+    cursor.execute(query, (username))
+    total_spent = cursor.fetchone()
+    total_spent = total_spent.get('sum(fi.sold_price)')
+    curr_month = datetime.today().month - 1
+    past_six = {}
+    rest = 0
+    if curr_month - 6 < 0:
+        rest = (curr_month - 6) * -1
+        for i in range(6 - rest):
+            past_six[months[curr_month - i]] = 0
+        for i in range(rest):
+            past_six[months[i]] = 0
+    else:
+        for i in range(6):
+            past_six[months[curr_month - i]] = 0
+    for month in past_six:
+        query = 'select sum(fi.sold_price) from flight_info fi, purchase p where p.email = %s and monthname(p.purchase_date_time) = %s and fi.ticket_id = p.ticket_id'
+        cursor.execute(query, (username, month))
+        total_spent_month = cursor.fetchone()
+        total_spent_month = total_spent_month.get('sum(fi.sold_price)')
+        if total_spent_month:
+            past_six[month] = total_spent_month
+    query = 'select o.airline_name, f.flight_num, a1.name as arr_name, f.arr_date_time, a2.name as dept_name, f.dept_date_time from flight f, operates o, purchase p, airport a1, airport a2 where f.flight_num = o.flight_num and f.flight_num = p.flight_num and p.email = %s and a1.code = f.arr_airport and a2.code = f.dept_airport'
+    cursor.execute(query, (username))
+    bought_flights = cursor.fetchall()
+    return render_template('history_cst.html', total_spent=total_spent, past_six=past_six, bought_flights=bought_flights)
+
+@app.route('/gethistorybydate', methods=['GET', 'POST'])
+def gethistorybydate():
+    username = session['username']
+    cursor = conn.cursor()
+    start_date = request.form['start_date']
+    end_date = request.form['end_date']
+    start_month = start_date.split('-')[2] + ' ' + datetime.strptime(start_date.split('-')[1], '%m').strftime('%B')
+    end_month = end_date.split('-')[2] + ' ' + datetime.strptime(end_date.split('-')[1], '%m').strftime('%B')
+
+    print(start_date, end_date)
+    if start_date > end_date:
+        return redirect(url_for('history'))
+    query = 'select sum(fi.sold_price) from flight_info fi, purchase p where p.email = %s and p.purchase_date_time between date(%s) and date(%s) and fi.ticket_id = p.ticket_id'
+    cursor.execute(query, (username, start_date, end_date))
+    total_spent = cursor.fetchone()['sum(fi.sold_price)']
+    query = 'select date(p.purchase_date_time), p.ticket_id, fi.sold_price as sale_price from purchase p, flight_info fi where p.email = %s and date(p.purchase_date_time) between date(%s) and date(%s) and fi.ticket_id = p.ticket_id'
+    cursor.execute(query, (username, start_date, end_date))
+    history_date = cursor.fetchall()
+    for line in history_date:
+        print(line)
+    return render_template('history_cst.html', total_spent_interval=total_spent, start_month=start_month, end_month=end_month, history_date=history_date)
 
 # Authenticates the login
 @app.route('/loginAuth', methods=['GET', 'POST'])
@@ -188,11 +251,12 @@ def home_cst():
 @app.route('/getflightsbydatecst', methods=['GET', 'POST'])
 def search_flights_date_cst():
     cursor = conn.cursor();
+    username = session['username']
     source = request.form['source']
     dest = request.form['destination']
     dept_date = request.form['dept_date']
     query =  'select distinct o.airline_name, f.flight_num, a1.name '
-    query += 'as arr_name, f.dept_date_time, a2.name as dept_name, f.arr_date_time from flight f, operates o, airport a1, airport a2 '
+    query += 'as arr_name, f.dept_date_time, a2.name as dept_name, f.new_price, f.arr_date_time from flight f, operates o, airport a1, airport a2 '
     query += 'where ((f.flight_num = o.flight_num and a1.code = f.arr_airport '
     query += 'and a2.code = f.dept_airport '
     query += 'and ("{}" = a1.city or "{}" = a1.name or "{}" = a1.code) '.format(dest, dest, dest)
@@ -212,16 +276,20 @@ def search_flights_date_cst():
     data1 = cursor.fetchall()
     for each in data1:
         print(each)
+    query = 'select name from customer where email = %s'
+    cursor.execute(query, (username))
+    cst_name = cursor.fetchone() 
     cursor.close()
-    return render_template('home_cst.html', flights_by_date=data1)
+    return render_template('home_cst.html', flights_by_date=data1, name=cst_name['name'])
 
 @app.route('/getflightsbynumcst', methods=['GET', 'POST'])
 def search_flights_num_cst():
     cursor = conn.cursor();
+    username = session['username']
     airline = request.form['airline']
     flight_num = request.form['flight_num']
     arr_dept = request.form['arr_dept']
-    query =  'select distinct f.status, f.flight_num, o.airline_name, f.base_price from flight f, airport a, operates o '
+    query =  'select distinct f.status, f.flight_num, o.airline_name, f.new_price, f.dept_date_time from flight f, airport a, operates o '
     query += 'where f.flight_num = "{}" '.format(flight_num)
     query += 'and o.flight_num = f.flight_num '
     query += 'and o.airline_name = "{}" '.format(airline)
@@ -232,9 +300,14 @@ def search_flights_num_cst():
     conn.commit()
     data1 = cursor.fetchall()
     for each in data1:
+        if each['dept_date_time'] <= datetime.now():
+            each['passed'] = 1
         print(each)
+    query = 'select name from customer where email = %s'
+    cursor.execute(query, (username))
+    cst_name = cursor.fetchone() 
     cursor.close()
-    return render_template('home_cst.html', flights_by_num=data1)
+    return render_template('home_cst.html', flights_by_num=data1, name=cst_name['name'])
        
 @app.route('/getflightsbydate', methods=['GET', 'POST'])
 def search_flights_date():
@@ -242,7 +315,7 @@ def search_flights_date():
     source = request.form['source']
     dest = request.form['destination']
     dept_date = request.form['dept_date']
-    query =  'select distinct o.airline_name, f.flight_num, a1.name, f.base_price '
+    query =  'select distinct o.airline_name, f.flight_num, a1.name, f.new_price '
     query += 'as arr_name, f.dept_date_time, a2.name as dept_name, f.arr_date_time from flight f, operates o, airport a1, airport a2 '
     query += 'where ((f.flight_num = o.flight_num and a1.code = f.arr_airport '
     query += 'and a2.code = f.dept_airport '
@@ -287,8 +360,46 @@ def search_flights_num():
     cursor.close()
     return render_template('index.html', flights_by_num=data1)
 
-@app.route('/buyhome')
-def buyhome():
+@app.route('/buyhome/<flight_num>/<airline>', methods=['GET', 'POST'])
+def buyhome(flight_num, airline):
+    print(flight_num, airline)
+    return render_template('buyticket.html', flight_num=flight_num, airline=airline)
+
+@app.route('/buyticket/<flight_num>/<airline>', methods=['GET', 'POST'])
+def buyticket(flight_num, airline):
+    cursor = conn.cursor()
+    username = session['username']
+    card_type = request.form['card_type']
+    card_name = request.form['card_name']
+    card_num = request.form['card_num']
+    card_exp = request.form['card_exp']
+    query = 'select max(ticket_id) from ticket'
+    cursor.execute(query)
+    ticket_id = cursor.fetchone()['max(ticket_id)'] + 1
+    query = 'select * from flight where flight_num = %s'
+    cursor.execute(query, (flight_num))
+    flight_info = cursor.fetchone()
+    if flight_info['dept_date_time'] <= datetime.now():
+        return render_template('home_cst.html')
+    query = 'select ap.seats from operates o, airplane ap where flight_num = %s and o.id = ap.id'
+    cursor.execute(query, (flight_num))
+    seats = cursor.fetchone()['seats']
+    per_seat = 1 / seats
+    new_price = flight_info['base_price']
+    flight_info['capacity'] += per_seat
+    if flight_info['capacity'] >= 0.75:
+        query = 'update flight set new_price = %s where flight_num = %s'
+        new_price *= 1.25
+        cursor.execute(query, (new_price, flight_num))
+    query = 'insert into ticket values(%s)'
+    cursor.execute(query, (ticket_id))
+    query = 'insert into purchase values(%s, %s, %s, %s, %s, %s, %s, %s)'
+    cursor.execute(query, (username, ticket_id, card_type, card_num, card_name, card_exp, datetime.now(), flight_num))
+    query = 'update flight set capacity = % where flight_num = %s'
+    print(flight_info['capacity'])
+    cursor.execute(query, (flight_info['capacity'], flight_num))
+    query = 'insert into flight_info values(%s, %s, %s)'
+    cursor.execute(query, (new_price, flight_num, ticket_id))
     return render_template('buyticket.html')
 
 @app.route('/logout')

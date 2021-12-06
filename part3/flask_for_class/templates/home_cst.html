@@ -3,6 +3,7 @@
 
 
 <body>
+<button class="tablink" onclick="location.href='/home_cst'">Home</button>
 <button class="tablink" onclick="location.href='/rating'" id="rating<">Ratings</button>
 <button class="tablink" onclick="location.href='/history'">History</button>
 <button class="tablink" onclick="location.href='/logout'">Log Out</button>
@@ -35,7 +36,12 @@
 	  <td>{{line['arr_date_time']}}</td>
 	  <td>{{line['dept_name']}}</td>
 	  <td>{{line['dept_date_time']}}</td>
-      <td><a href="/buyhome">${{line['base_price']}}</a></td>
+      {% if line['passed']%}
+              <td>${{line['new_price']}}</td>
+      {% endif %}
+      {% if not line['passed'] %}    
+              <td><a href="{{url_for('buyhome', flight_num=line['flight_num'], airline=line['airline_name'])}}">${{line['new_price']}}</a></td>
+      {% endif %}
    </tr>
 {% endfor %}
 </table>
@@ -97,7 +103,7 @@
         cursor: pointer;
         padding: 10px 16px 10px 16px;
         font-size: 100%;
-        width: 33.33%;
+        width: 25%;
         position: relative;
         top: -22px;
     }
@@ -120,8 +126,13 @@
 			   <td>{{line['airline_name']}}</td>
 			   <td>{{line['flight_num']}}</td>
                <td>{{line['status']}}</td>
-               <td><a href="/buyhome">${{line['base_price']}}</a></td>
-		  </tr>
+               {% if line['passed'] %}
+                      <td>${{line['new_price']}}</td>
+               {% endif %}
+               {% if not line['passed'] %}    
+                      <td><a href="{{url_for('buyhome', flight_num=line['flight_num'], airline=line['airline_name'])}}">${{line['new_price']}}</a></td>
+               {% endif %}
+           </tr>
 		{% endfor %}
 	</table>
 

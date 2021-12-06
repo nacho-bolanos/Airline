@@ -1,0 +1,12 @@
+Jose Bolanos
+
+Files Used
+
+init1.py            -> File to manage all urls, flask, and mysql calls
+buyticket.html      -> Generates buying page
+history_cst.html    -> Generates history page
+home_cst.html       -> Genertes home when signed in
+index.html          -> Generates home without having to be signed in
+login.html          -> Generates login page
+rating.html         -> Generates rating page
+register.html       -> Generates register page

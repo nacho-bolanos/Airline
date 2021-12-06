@@ -65,7 +65,9 @@ create table flight (
     arr_airport varchar(10),
     arr_date_time datetime,
     base_price int,
+    new_price int,
     status varchar(25),
+    capacity float,
     foreign key (dept_airport) references airport(code),
     foreign key (arr_airport) references airport(code),
     primary key (flight_num, dept_date_time)
@@ -74,13 +76,8 @@ create table flight (
 create table operates (
     airline_name varchar(50),
     flight_num int, 
+    id varchar(50),
     foreign key (airline_name) references airline(name),
-    foreign key (flight_num) references flight(flight_num)
-);
-
-create table use_plane (
-    id varchar(50) ,
-    flight_num int, 
     foreign key (id) references airplane(id),
     foreign key (flight_num) references flight(flight_num)
 );
@@ -114,7 +111,6 @@ create table purchase (
     card_name varchar(50),
     card_exp date,
     purchase_date_time datetime,
-    capacity int,
     flight_num int,
     foreign key (email) references customer(email),
     foreign key (flight_num)  references flight(flight_num),

@@ -28,18 +28,18 @@ values ("john@gmail.com", md5("youcantseeme"), "John", "Cena");
 
 insert into works (username, airline_name) values ("john@gmail.com", "China Eastern");
 
-insert into flight (flight_num, dept_airport, dept_date_time, arr_airport, arr_date_time, base_price, status)
-values (123, "JFK", "2021-11-11 13:45:00", "PVG", '2021-11-12 01:00:00', 240, "ontime");
+insert into flight (flight_num, dept_airport, dept_date_time, arr_airport, arr_date_time, base_price, new_price, status, capacity)
+values (123, "JFK", "2021-11-11 13:45:00", "PVG", '2021-11-12 01:00:00', 240, 240, "ontime", 0);
 
-insert into flight (flight_num, dept_airport, dept_date_time, arr_airport, arr_date_time, base_price, status)
-values (234, "JFK", '2021-09-11 16:30:00', "PVG", '2021-09-12 04:00:00', 540, "delayed");
+insert into flight (flight_num, dept_airport, dept_date_time, arr_airport, arr_date_time, base_price, new_price, status, capacity)
+values (234, "JFK", '2021-09-11 16:30:00', "PVG", '2021-09-12 04:00:00', 540, 540, "delayed", 0);
 
-insert into flight (flight_num, dept_airport, dept_date_time, arr_airport, arr_date_time, base_price, status)
-values (124, "PVG", '2021-12-04 09:15:00', "JFK", '2021-12-05 23:00:00', 375, "ontime");
+insert into flight (flight_num, dept_airport, dept_date_time, arr_airport, arr_date_time, base_price, new_price, status, capacity)
+values (124, "PVG", '2021-12-04 09:15:00', "JFK", '2021-12-05 23:00:00', 375, 375, "ontime", 0);
 
-insert into operates (airline_name, flight_num) values ('China Eastern', 123);
-insert into operates (airline_name, flight_num) values ('China Eastern', 234);
-insert into operates (airline_name, flight_num) values ('China Eastern', 124);
+insert into operates (airline_name, flight_num, id) values ('China Eastern', 123, 'Boeing 737-800' );
+insert into operates (airline_name, flight_num, id) values ('China Eastern', 234, 'Airbus A320ceo');
+insert into operates (airline_name, flight_num, id) values ('China Eastern', 124, 'Boeing 737-800');
 
 insert into ticket (ticket_id) values (1);
 insert into ticket (ticket_id) values (2);

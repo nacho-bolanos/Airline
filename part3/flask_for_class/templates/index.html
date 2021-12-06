@@ -1,14 +1,10 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-
-</head>
-
 <body>
 {% if not message %}
-	<a href="/login">Login</a>
-	<a href="/register">Register</a>
+<button class="tablink" onclick="location.href='/login'">Login</button>
+<button class="tablink" onclick="location.href='/register'">Register</button>
 
 <form action="/getflightsbydate" id='flight_date' method="POST">
 	<h1>Welcome to NYU Airlines</h1>
@@ -66,6 +62,26 @@
 
 
 <style type="text/css">
+    body, html {
+       margin: 0px;
+       min-height: 100%;
+       width: 100%;
+    }
+
+    .tablink 
+    {
+        background-color: #555;
+        color: white;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 10px 16px 10px 16px;
+        font-size: 100%;
+        width: 50%;
+        position: relative;
+    }
+
 	table, th, td{
 		border: 1px solid black;
 	}

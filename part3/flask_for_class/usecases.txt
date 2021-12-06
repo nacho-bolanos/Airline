@@ -1,0 +1,80 @@
+Jose Bolanos
+
+View Public Info
+
+Getting flights by date
+select distinct o.airline_name, f.flight_num, a1.name, f.new_price as arr_name, f.dept_date_time, a2.name as dept_name, f.arr_date_time from flight f, operates o, airport a1, airport a2 where ((f.flight_num = o.flight_num and a1.code = f.arr_airport and a2.code = f.dept_airport and ("{}" = a1.city or "{}" = a1.name or "{}" = a1.code) and ("{}" = a2.city or "{}" = a2.name or "{}" = a2.code) and (date(f.dept_date_time) = "{}"))
+
+If the customers ask for a return flight then this is added to the query 
+or ((f.flight_num = o.flight_num and a1.code = f.arr_airport and a2.code = f.dept_airport and ("{}" = a2.city or "{}" = a2.name or "{}" = a2.code) and ("{}" = a1.city or "{}" = a1.name or "{}" = a1.code) and (date(f.dept_date_time) = "{}")))
+
+Getting flights by flight number and airline
+select distinct f.status, f.flight_num, o.airline_name from flight f, airport a, operates o where f.flight_num = "{}" .format(flight_num) and o.flight_num = f.flight_num and o.airline_name = "{}" .format(airline) and (f.arr_airport = a.code or f.dept_airport = a.code) and (a.code = "{}" or a.name = "{}" or a.city = "{}") .format(arr_dept, arr_dept, arr_dept)
+
+Register
+
+Checks if the customer exsists
+select * from customer where email = %s
+
+Inserts the customer into the table
+insert into customer values(username, md5(password), name, adrr_building_num, adrr_street, addr_city, addr_state, phone_num, passport_num, passport_exp, passport_country, date_of_birth)
+
+Cheks if the staff exists
+select * from airline where name = %s
+
+Inserts the staff into the table
+insert into airline_staff values (username, md5(password), fname, lname)
+
+Insert phone numbers
+insert into staff_phonenum values (username, num)
+
+Insert into works to get the employer
+insert into works values (username, works)
+
+Customer Use Cases
+    View my flights
+        select o.airline_name, f.flight_num, a1.name as arr_name, f.arr_date_time, a2.name as dept_name, f.dept_date_time from flight f, operates o, purchase p, airport a1, airport a2 where f.flight_num = o.flight_num and f.flight_num = p.flight_num and p.email = username and a1.code = f.arr_airport and a2.code = f.dept_airport
+    Search for flights
+        By date
+        select distinct o.airline_name, f.flight_num, a1.name as arr_name, f.dept_date_time, a2.name as dept_name, f.new_price, f.arr_date_time from flight f, operates o, airport a1, airport a2 where ((f.flight_num = o.flight_num and a1.code = f.arr_airport and a2.code = f.dept_airport and ("{}" = a1.city or "{}" = a1.name or "{}" = a1.code)and ("{}" = a2.city or "{}" = a2.name or "{}" = a2.code) and (date(f.dept_date_time) = "{}"))
+        if need return flight this is added
+        or ((f.flight_num = o.flight_num and a1.code = f.arr_airport and a2.code = f.dept_airport and ("{}" = a2.city or "{}" = a2.name or "{}" = a2.code)and ("{}" = a1.city or "{}" = a1.name or "{}" = a1.code) and (date(f.dept_date_time) = "{}")))
+
+        By flight number and airline
+        select distinct f.status, f.flight_num, o.airline_name, f.new_price from flight f, airport a, operates o where f.flight_num = "{}" .format(flight_num) and o.flight_num = f.flight_num and o.airline_name = "{}" .format(airline) and (f.arr_airport = a.code or f.dept_airport = a.code) and (a.code = "{}" or a.name = "{}" or a.city = "{}") .format(arr_dept, arr_dept, arr_dept)
+
+    Purchase tickets
+        Getting new ticket_id
+        select max(ticket_id) from ticket
+        Getting flight_info
+        select * from flight where flight_num = %s
+        Getting quantity of seats
+        select ap.seats from operates o, airplane ap where flight_num = %s and o.id = ap.id
+        Updating the price when the capacity is 75% or more
+        update flight set new_price = %s where flight_num = %s
+        Inserting into ticket
+        insert into ticket values(%s)
+        Inserting into purchase
+        insert into purchase values(%s, %s, %s, %s, %s, %s, %s, %s)
+        Modifying the capacity
+        update flight set capacity = % where flight_num = %s
+        Inserting into flight_info
+        insert into flight_info values(%s, %s, %s)
+
+    Ratings
+        Getting current ratings
+        select distinct flight_num, rating, comments from rate where email = %s
+        Checking if customer flew on that flight
+        select * from purchase where flight_num = %s and email = %s
+        If the flight has not yet passed
+        select * from flight where flight_num = %s and dept_date_time < SYSDATE()
+        Inserting into rates
+        insert into rate values(flight_num, username, num_rate, comment)
+    Track Spending
+        Getting the total spending in the last year
+        select sum(fi.sold_price) from flight_info fi, purchase p where p.email = %s and p.purchase_date_time between date_sub(now(), interval 1 year) and now() and fi.ticket_id = p.ticket_id
+        Getting montly spending
+        select sum(fi.sold_price) from flight_info fi, purchase p where p.email = %s and monthname(p.purchase_date_time) = %s and fi.ticket_id = p.ticket_id
+
+    Logout
+        To logout the username is popped from the session

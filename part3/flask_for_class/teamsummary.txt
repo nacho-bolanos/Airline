@@ -1,0 +1,3 @@
+Jaeha Huh: Login, Airline Staff use cases
+Jose Bolanos: View Public Info, Register Customer
+
