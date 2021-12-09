@@ -147,8 +147,7 @@ def loginAuth():
         print(query)
     elif loginType == 'works':
         query = 'SELECT * FROM airline_staff WHERE username = %s and password = md5(%s)'
-
-    print(query)
+        print(query)
     cursor.execute(query, (username, password))
     # stores the results in a variable
     data = cursor.fetchone()
@@ -199,7 +198,7 @@ def registerAuth():
         passport_exp = request.form['exp_date']
         passport_country = request.form['passport_country']
         date_of_birth = request.form['date_of_birth']
-        ins  = 'insert into customer values('
+        ins     = 'insert into customer values('
         ins += '%s, md5(%s), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
         cursor.execute(ins, (username, password, name, adrr_building_num, adrr_street, addr_city, addr_state, phone_num, passport_num, passport_exp, passport_country, date_of_birth))
     elif (type_user == 'stf'):
@@ -401,6 +400,83 @@ def buyticket(flight_num, airline):
     query = 'insert into flight_info values(%s, %s, %s)'
     cursor.execute(query, (new_price, flight_num, ticket_id))
     return render_template('buyticket.html')
+
+
+
+#Staff
+@app.route('/home_stf')
+def home_stf():
+    username = session['username']
+    print(username)
+    cursor = conn.cursor()
+    query = 'select fname from airline_staff where email = %s'
+    cursor.execute(query, (username))
+    stf_name = cursor.fetchone()
+    return render_template('home_stf.html', name=stf_name['fname'])
+
+@app.route('/view_flights_stf', methods=['GET','POST'])
+def view_flights_stf():
+    cursor = conn.cursor()
+    username = session['username']
+    query = 'SELECT * FROM flight, works where dept_date_time >= NOW() AND dept_date_time < NOW() + INTERVAL 1 MONTH'
+
+    cursor.execute(query)
+    conn.commit()
+    cursor.fetchall()
+    cursor.close()
+
+    return render_template('view_flights_stf.html')
+
+@app.route('/manage_flights', methods=['GET','POST'])
+def create_flight():
+    cursor = conn.cursor()
+    username = session['username']
+    flight_num = request.form['flight_num']
+    dept_airport = request.form['dept_airport']
+    dept_date_time = request.form['dept_date_time']
+    arr_airport = request.form['arr_airport']
+    arr_date_time = request.form['arr_date_time']
+    base_price = request.form['base_price']
+    new_price = request.form['new_price']
+    status = request.form['status']
+    capacity = request.form['capacity']
+    query = 'insert into flight values(%s, %s, %s, %s, %s, %s, %s, %s)'
+    cursor.execute(query, (flight_num, dept_airport, dept_date_time, arr_airport, arr_date_time, base_price, new_price, status, capacity))
+
+    return render_template('manage_flights.html')
+
+@app.route('/manage_flights', methods=['GET','POST'])
+def status_flight():
+    cursor = conn.cursor()
+    username = session['username']
+    status = request.form['status']
+    query = 'Update flight SET status where flight_num = %s'
+    cursor.execute(query, status)
+    cursor.fetchall()
+    cursor.close()
+    return render_template('manage_flights.html')
+
+@app.route('/manage_airplane', methods=['GET','POST'])
+def add_airplane():
+    cursor = conn.cursor()
+    username = session['username']
+    id = request.form['id']
+    seats = request.form['seats']
+    query = 'insert into airplane values(%s, %s)'
+    cursor.excute(query, (id, seats))
+
+    return render_template('manage_airplane.html')
+
+@app.route('/manage_airport', methods=['GET','POST'])
+def add_airport():
+    cursor = conn.cursor()
+    username = session['username']
+    code = request.form['code']
+    name = request.form['name']
+    query = 'insert into airplane values(%s, %s)'
+    cursor.excute(query, (code, name))
+    return render_template('manage_airport.html')
+
 
 @app.route('/logout')
 def logout():
