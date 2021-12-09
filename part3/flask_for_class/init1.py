@@ -445,13 +445,13 @@ def create_flight():
 
     return render_template('manage_flights.html')
 
-@app.route('/manage_flights', methods=['GET','POST'])
-def status_flight():
+@app.route('/manage_flights/<flight_num>/<airline>', methods=['GET','POST'])
+def status_flight(flight_num, airline):
     cursor = conn.cursor()
     username = session['username']
     status = request.form['status']
-    query = 'Update flight SET status where flight_num = %s'
-    cursor.execute(query, status)
+    query = 'Update flight SET status'
+    cursor.execute(query, (status, flight_num))
     cursor.fetchall()
     cursor.close()
     return render_template('manage_flights.html')
