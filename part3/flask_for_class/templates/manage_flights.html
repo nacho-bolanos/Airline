@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset = "UTF-8">
+	<title>manage_flights</title>
+</head>
+<h1>manage_flights</h1>
+<Body>
+<form action={{url_for('manage_flights')}} method="POST">
+
+    <label for='flight_num'>flight Num</label></br>
+    <input type='text' name='flight_num' required></br>
+    <label for='dept_airport'>Airport(Depart)</label></br>
+    <input type='text' name='dept_airport'required></br>
+    <label for='dept_date_time'>dept_date_time</label></br>
+    <input type='date' name='dept_date_time'required></br>
+    <label for='arr_airport'>Airport(Arrive)</label></br>
+    <input type='text' name='arr_airport'required></br>
+	<label for='arr_date_time'>arr_date_time</label></br>
+    <input type='date' name='arr_date_time'required></br>
+	<label for='base_price'>Base price</label></br>
+    <input type='int' name='base_price'required></br>
+	<label for='new_price'>New price</label></br>
+    <input type='int' name='new_price'required></br>
+	<label for='status'>status</label></br>
+    <input type='text' name='status' required></br>
+	<label for='capacity'>capacity</label></br>
+    <input type='int' name='capacity' required></br>
+	<br><input type='submit' onclick='errorfunc()' value='submit'></br>
+	
+
+<form action={{url_for('manage_flights', flight_num=flight_num, airline=airline))}} method="POST">
+	
+	<label for='status'>status</label></br>
+    <input type='text' name='status' required></br>
+	<br><input type='submit' onclick='errorfunc()' value='change'></br>
+
+</form>
+</Body>
+</html>

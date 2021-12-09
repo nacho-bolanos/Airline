@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset = "UTF-8">
+	<title>manage_airport</title>
+</head>
+<h1>manage_airport</h1>
+<Body>
+<form action={{url_for('manage_airport')}} method="POST">
+
+    <label for='code'>Airport code</label></br>
+    <input type='text' name='code' required></br>
+    <label for='name'>Airport Name</label></br>
+    <input type='text' name='name'required></br>
+
+	<br><input type='submit' onclick='errorfunc()' value='submit'></br>
+	
+
+</form>
+</Body>
+</html>
